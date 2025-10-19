@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  # === バックエンドサービス (Python/FastAPI) ===
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: guitar-tab-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend:/app
+    # 開発用にコード変更を自動反映する設定
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+    env_file:
+      - .env
+
+  # === フロントエンドサービス (React/TypeScript) - プレースホルダ ===
+  frontend:
+    image: node:20-alpine
+    container_name: guitar-tab-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+    working_dir: /app
+    command: sh -c "echo 'Frontend container is running' && sleep infinity"
+
+# .envファイルと.gitignoreも作成しておきます
+user@DESKTOP-2K96K33:~/guitar-tab-generator$ touch .env
+user@DESKTOP-2K96K33:~/guitar-tab-generator$ echo "uploaded_videos/" >> .gitignore
+user@DESKTOP-2K96K33:~/guitar-tab-generator$ echo "processed_files/" >> .gitignore
