@@ -1,15 +1,25 @@
-# 1. Pythonの公式イメージを指定
-FROM python:3.11-slim-buster
+# 1. Pythonの公式イメージ（buster は EOL → slim の最新を使う）
+FROM python:3.10-slim
 
-# 2. コンテナ内部の作業ディレクトリを設定
+# 2. 必要なシステム依存パッケージ
+RUN apt-get update && apt-get install -y \
+    git \
+    ffmpeg \
+    libsndfile1 \
+    build-essential \
+    libmp3lame-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# 3. 作業ディレクトリ
 WORKDIR /app
 
-# 3. requirements.txtをコピーしてライブラリをインストール
+# 4. Python依存ライブラリ
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# 4. アプリケーション本体のコードをコピー
+# 5. アプリコード
 COPY . .
 
-# 5. アプリケーション実行コマンド (docker composeで上書きされるが記述)
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]

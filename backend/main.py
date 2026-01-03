@@ -1,13 +1,12 @@
+# main.py
+# ==========================
 from fastapi import FastAPI
-# 開発中のため、相対パスでルーターをインポートします
-from .routers import tab_generator
+from routers import test_ai  # ← 追加：新しいルーターを読み込む
 
-# FastAPIアプリケーションのインスタンスを作成
-app = FastAPI()
+app = FastAPI(title="Guitar Tab Generator API")
 
-# ルーター（コントローラー群）の登録
-# tab_generator.pyで定義されたルートが有効になります
-app.include_router(tab_generator.router)
+# ルーターを登録
+app.include_router(test_ai.router)
 
 @app.get("/")
 def read_root():
